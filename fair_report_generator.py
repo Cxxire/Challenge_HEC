@@ -132,6 +132,7 @@ def run_simulation(n_sims=10000, tef_params=(1.0, 1.5, 2.0), vuln_params=(0.15, 
         "ael_net": float(np.mean(annual_net_loss)),
         "var_90_net": float(np.percentile(annual_net_loss, 90)),
         "var_95_net": float(np.percentile(annual_net_loss, 95)),
+        "var_99_net": float(np.percentile(annual_net_loss, 99)),
         "prob_exceed_50m": float(np.mean(annual_net_loss > 50_000_000)),
         "prob_breach": float(np.mean(annual_loss_events > 0)),
         "avg_downtime": float(np.mean(annual_downtime_weeks[annual_loss_events > 0])) if np.any(annual_loss_events > 0) else 0.0,
@@ -554,10 +555,10 @@ def generate_pdf_report():
         <div class="panel">
           <div class="panel-title">1. Current Risk Posture (As-Is Baseline)</div>
           <div class="alert-box">
-            <strong>CRITICAL RISK VIOLATION:</strong> The baseline 90% VaR of <strong>€{baseline['var_90_net']/1e6:.1f}M</strong> severely breaches the Board's <strong>€50M Risk Appetite</strong>. There is a <strong>{baseline['prob_exceed_50m']:.1%} annual probability</strong> of experiencing catastrophic loss.
+            <strong>CRITICAL RISK VIOLATION:</strong> The baseline 90% VaR of <strong>€{baseline['var_90_net']/1e6:.1f}M</strong> (95% VaR: <strong>€{baseline['var_95_net']/1e6:.1f}M</strong>, 99% VaR: <strong>€{baseline['var_99_net']/1e6:.1f}M</strong>) severely breaches the Board's <strong>€50M Risk Appetite</strong>. Annual appetite breach probability is <strong>{baseline['prob_exceed_50m']:.1%}</strong>.
           </div>
           <div style="font-size: 7.4pt; color: #475569;">
-            • <strong>Root Cause:</strong> 90% EDR leaves a 10% server blind spot, 0% OT visibility, and manual IR processes that delay full recovery to an average of <strong>{baseline['avg_downtime']:.1f} weeks</strong> (surpassing the 2-week backup threshold).
+            • <strong>Root Cause:</strong> 90% EDR leaves a 10% server blind spot, 0% OT visibility, and manual IR processes that delay recovery to an average of <strong>{baseline['avg_downtime']:.1f} weeks</strong> (surpassing the 2-week backup threshold).
           </div>
         </div>
       </div>
@@ -568,7 +569,7 @@ def generate_pdf_report():
         <div class="panel">
           <div class="panel-title">2. Mitigated Risk Posture (€2M Investment)</div>
           <div class="success-box">
-            <strong>BOARD RISK COMPLIANCE ACHIEVED:</strong> With the €2M automation & OT defense initiative, 90% VaR drops to <strong>€{mitigated['var_90_net']/1e6:.1f}M</strong>, and appetite exceedance probability plunges from <strong>{baseline['prob_exceed_50m']:.1%} to {mitigated['prob_exceed_50m']:.1%}</strong>.
+            <strong>BOARD RISK COMPLIANCE ACHIEVED:</strong> With the €2M initiative, 90% VaR drops to <strong>€{mitigated['var_90_net']/1e6:.1f}M</strong> (95% VaR: <strong>€{mitigated['var_95_net']/1e6:.1f}M</strong>, 99% VaR: <strong>€{mitigated['var_99_net']/1e6:.1f}M</strong>), and appetite exceedance plunges from <strong>{baseline['prob_exceed_50m']:.1%} to {mitigated['prob_exceed_50m']:.1%}</strong>.
           </div>
           <div style="font-size: 7.4pt; color: #475569;">
             • <strong>High Return on Investment:</strong> Reduces expected annual losses by <strong>€{risk_reduction/1e6:.1f}M/year</strong>, delivering a <strong>{rosi:.0f}% ROSI</strong> and returning net positive value within the first quarter of deployment.

@@ -243,6 +243,7 @@ def main():
     print(f" • Annualized Expected Loss (Net AEL):       €{baseline['ael_net']:,.0f}")
     print(f" • 90% Value at Risk (90% VaR):             €{baseline['var_90_net']:,.0f}")
     print(f" • 95% Value at Risk (95% VaR):             €{baseline['var_95_net']:,.0f}")
+    print(f" • 99% Value at Risk (99% VaR):             €{baseline['var_99_net']:,.0f}")
     print(f" • Maximum Simulated Single-Year Loss:      €{baseline['max_loss_net']:,.0f}")
     print(f" • Probability of Exceeding Board Appetite: {baseline['prob_exceed_50m']:.1%}  (Appetite: €50M)")
     print(f" • Average Breach Downtime:                 {baseline['expected_downtime_weeks']:.2f} weeks")
@@ -255,6 +256,7 @@ def main():
     print(f" • Post-Mitigation Net AEL:                 €{mitigated['ael_net']:,.0f}")
     print(f" • Post-Mitigation 90% VaR:                 €{mitigated['var_90_net']:,.0f}")
     print(f" • Post-Mitigation 95% VaR:                 €{mitigated['var_95_net']:,.0f}")
+    print(f" • Post-Mitigation 99% VaR:                 €{mitigated['var_99_net']:,.0f}")
     print(f" • Probability of Exceeding Board Appetite: {mitigated['prob_exceed_50m']:.1%}  (Near Zero)")
     
     print("\n" + "-" * 80)
