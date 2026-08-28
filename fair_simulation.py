@@ -343,7 +343,7 @@ def main():
              fontsize=10, bbox=dict(boxstyle="round,pad=0.5", facecolor="#eef3f7", edgecolor="#005587", alpha=0.9))
 
     plt.tight_layout()
-    plt.savefig("lec_curve_output.png", dpi=160)
+    plt.savefig("lec_curve_output_new.png", dpi=160)
     print("\n[SUCCESS] Charts saved to 'lec_curve_output.png'")
     
     return baseline, mitigated
