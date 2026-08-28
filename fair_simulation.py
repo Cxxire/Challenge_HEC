@@ -88,7 +88,7 @@ def run_fair_simulation(
     # Secondary Losses: Legal, GDPR, Refunds (€)
     secondary_min=0, secondary_mode=2_000_000, secondary_max=5_000_000,
     # Ransom Cap and Extortion Behavior
-    ransom_cap=20_000_000,
+    ransom_cap=20_000_000, ransom_min = 5_000_000, ransom_max = 40_000_000,
     # Insurance Parameters
     insurance_weekly_payout=500_000,
     insurance_max_weeks=8,
@@ -140,10 +140,12 @@ def run_fair_simulation(
         for j, dt in enumerate(downtimes):
             # If outage extends beyond backup threshold (2 weeks), pressure to pay escalates
             p_pay = 0.25 if dt < 2.0 else (0.65 if dt < 3.0 else 0.90)
-            if np.random.rand() < p_pay:
-                # Sample ransom demand / settlement up to the €20M willingness cap
-                ransom_losses[j] = float(gauss(1, 5_000_000, 12_000_000, ransom_cap)[0])
-                
+            # Sample ransom demand / settlement with the €20M willingness cap as average
+            ransom_amount = float(gauss(1, ransom_min, ransom_cap, ransom_max)[0])
+            if np.random.rand() < p_pay and ransom_amount < ransom_cap:
+                # Ransom is paid, but capped at the organization's willingness to pay
+                ransom_losses[j] = ransom_amount
+
         sec_other_losses = gauss(n_breaches, secondary_min, secondary_mode, secondary_max)
         
         # Insurance payout calculation per event
