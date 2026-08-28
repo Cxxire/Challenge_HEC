@@ -210,59 +210,10 @@ def run_fair_simulation(
     }
     return results
 
-
-# --------------------------------------------------------------------------------------
-# 3. Main Execution & Comparison (As-Is Baseline vs. To-Be Mitigation)
-# --------------------------------------------------------------------------------------
-def main():
-    BOARD_RISK_APPETITE = 50_000_000  # €50M Board limit
-    MITIGATION_INVESTMENT = 2_000_000  # €2M Security Automation & OT Visibility Project
-    
-    print("=" * 80)
-    print(" CARREMAX CYBER RISK QUANTIFICATION (FAIR MONTE CARLO SIMULATION)")
-    print("=" * 80)
-    print(f"Iterations: 10,000 | Board Risk Appetite: €{BOARD_RISK_APPETITE:,.0f}\n")
-    
-    
-    print("Running FAIR Monte Carlo Simulation for Baseline (As-Is) and Mitigated (To-Be) Scenarios...\n")
-    print("Variable duration downtime")
-    # ----------------------------------------------------------------------------------
-    # A. Baseline Simulation (As-Is: 90% EDR, Manual IR, 0% OT Visibility)
-    # ----------------------------------------------------------------------------------
-    baseline1 = run_fair_simulation(
-        n_sims=10000,
-        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-        vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
-        downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
-        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
-        secondary_min=0, secondary_mode=2_000_000, secondary_max=5_000_000,
-        ransom_cap=20_000_000,
-        insurance_weekly_payout=500_000,
-        insurance_max_weeks=8,
-        insurance_annual_premium=300_000,
-        seed=42
-    )
-    
-    # ----------------------------------------------------------------------------------
-    # B. Mitigated Simulation (To-Be: 100% EDR, Automated IR, Supply-Chain OT Visibility)
-    # ----------------------------------------------------------------------------------
-    # 1. Vuln drops drastically 
-    # 2. Downtime duration drops due to automated recovery
-    # 3. IR/Forensics cost drops due to automated playbooks
-    mitigated1 = run_fair_simulation(
-        n_sims=10000,
-        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-        vuln_min=0.05, vuln_mode=0.15, vuln_max=0.28,
-        downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-        ir_min=2_000_000, ir_mode=4_500_000, ir_max=7_000_000,
-        secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
-        ransom_cap=20_000_000,
-        insurance_weekly_payout=500_000,
-        insurance_max_weeks=8,
-        insurance_annual_premium=300_000,
-        seed=42
-    )
-    
+def show_results(baseline1, mitigated1, name_sim):
+    """
+    Display the simulation results for both baseline and mitigated scenarios.
+    """
     # ----------------------------------------------------------------------------------
     # C. Executive Metrics & ROSI Calculation
     # ----------------------------------------------------------------------------------
@@ -363,8 +314,64 @@ def main():
              fontsize=10, bbox=dict(boxstyle="round,pad=0.5", facecolor="#eef3f7", edgecolor="#005587", alpha=0.9))
 
     plt.tight_layout()
-    plt.savefig("lec_curve_output_new.png", dpi=160)
+    plt.savefig("lec_curve_output"+name_sim+".png", dpi=160)
     print("\n[SUCCESS] Charts saved to 'lec_curve_output.png'")
+
+
+
+# --------------------------------------------------------------------------------------
+# 3. Main Execution & Comparison (As-Is Baseline vs. To-Be Mitigation)
+# --------------------------------------------------------------------------------------
+def main():
+    BOARD_RISK_APPETITE = 50_000_000  # €50M Board limit
+    MITIGATION_INVESTMENT = 2_000_000  # €2M Security Automation & OT Visibility Project
+    
+    print("=" * 80)
+    print(" CARREMAX CYBER RISK QUANTIFICATION (FAIR MONTE CARLO SIMULATION)")
+    print("=" * 80)
+    print(f"Iterations: 10,000 | Board Risk Appetite: €{BOARD_RISK_APPETITE:,.0f}\n")
+    
+    
+    print("Running FAIR Monte Carlo Simulation for Baseline (As-Is) and Mitigated (To-Be) Scenarios...\n")
+    print("Variable duration downtime")
+    # ----------------------------------------------------------------------------------
+    # A. Baseline Simulation (As-Is: 90% EDR, Manual IR, 0% OT Visibility)
+    # ----------------------------------------------------------------------------------
+    baseline1 = run_fair_simulation(
+        n_sims=10000,
+        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+        vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
+        downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
+        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+        secondary_min=0, secondary_mode=2_000_000, secondary_max=5_000_000,
+        ransom_cap=20_000_000,
+        insurance_weekly_payout=500_000,
+        insurance_max_weeks=8,
+        insurance_annual_premium=300_000,
+        seed=42
+    )
+    
+    # ----------------------------------------------------------------------------------
+    # B. Mitigated Simulation (To-Be: 100% EDR, Automated IR, Supply-Chain OT Visibility)
+    # ----------------------------------------------------------------------------------
+    # 1. Vuln drops drastically 
+    # 2. Downtime duration drops due to automated recovery
+    # 3. IR/Forensics cost drops due to automated playbooks
+    mitigated1 = run_fair_simulation(
+        n_sims=10000,
+        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+        vuln_min=0.05, vuln_mode=0.15, vuln_max=0.28,
+        downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+        ir_min=2_000_000, ir_mode=4_500_000, ir_max=7_000_000,
+        secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+        ransom_cap=20_000_000,
+        insurance_weekly_payout=500_000,
+        insurance_max_weeks=8,
+        insurance_annual_premium=300_000,
+        seed=42
+    )
+    
+    show_results(baseline1, mitigated1, "_var_downtime")
     
     
     print("Running FAIR Monte Carlo Simulation for Baseline (As-Is) and Mitigated (To-Be) Scenarios...\n")
@@ -406,112 +413,7 @@ def main():
         seed=42
     )
     
-    # ----------------------------------------------------------------------------------
-    # C. Executive Metrics & ROSI Calculation
-    # ----------------------------------------------------------------------------------
-    risk_reduction_ael = baseline2["ael_net"] - mitigated2["ael_net"]
-    rosi = ((risk_reduction_ael - MITIGATION_INVESTMENT) / MITIGATION_INVESTMENT) * 100.0
-    
-    print("-" * 80)
-    print(" 1. AS-IS BASELINE RISK PROFILE (CURRENT STATE)")
-    print("-" * 80)
-    print(f" • Annual Probability of at Least 1 Breach: {baseline2['prob_at_least_one_breach']:.1%}")
-    print(f" • Annualized Expected Loss (Net AEL):       €{baseline2['ael_net']:,.0f}")
-    print(f" • 90% Value at Risk (90% VaR):             €{baseline2['var_90_net']:,.0f}")
-    print(f" • 95% Value at Risk (95% VaR):             €{baseline2['var_95_net']:,.0f}")
-    print(f" • 99% Value at Risk (99% VaR):             €{baseline2['var_99_net']:,.0f}")
-    print(f" • Maximum Simulated Single-Year Loss:      €{baseline2['max_loss_net']:,.0f}")
-    print(f" • Probability of Exceeding Board Appetite: {baseline2['prob_exceed_50m']:.1%}  (Appetite: €50M)")
-    print(f" • Average Breach Downtime:                 {baseline2['expected_downtime_weeks']:.2f} weeks")
-    print(f" • Average Insurance Payout per Breach:     €{baseline2['expected_insurance_recovery']:,.0f}")
-
-    print("\n" + "-" * 80)
-    print(" 2. TO-BE MITIGATED PROFILE (€2M AUTOMATION + 100% EDR + OT CONTROL)")
-    print("-" * 80)
-    print(f" • Annual Probability of at Least 1 Breach: {mitigated2['prob_at_least_one_breach']:.1%}")
-    print(f" • Post-Mitigation Net AEL:                 €{mitigated2['ael_net']:,.0f}")
-    print(f" • Post-Mitigation 90% VaR:                 €{mitigated2['var_90_net']:,.0f}")
-    print(f" • Post-Mitigation 95% VaR:                 €{mitigated2['var_95_net']:,.0f}")
-    print(f" • Post-Mitigation 99% VaR:                 €{mitigated2['var_99_net']:,.0f}")
-    print(f" • Probability of Exceeding Board Appetite: {mitigated2['prob_exceed_50m']:.1%}  (Near Zero)")
-
-    print("\n" + "-" * 80)
-    print(" 3. STRATEGIC BUSINESS CASE & RETURN ON SECURITY INVESTMENT (ROSI)")
-    print("-" * 80)
-    print(f" • Annual Net Risk Reduction (Δ AEL):       €{risk_reduction_ael:,.0f}")
-    print(f" • Proposed Security Investment:            €{MITIGATION_INVESTMENT:,.0f}")
-    print(f" • Return on Security Investment (ROSI):    {rosi:.1f}%")
-    print(f" • Net Annual Benefit:                      €{(risk_reduction_ael - MITIGATION_INVESTMENT):,.0f} / year")
-    print("=" * 80)
-    
-    # ----------------------------------------------------------------------------------
-    # D. Multi-Panel Visualizations
-    # ----------------------------------------------------------------------------------
-    plt.figure()
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6.5))
-    
-    # --- Plot 1: Loss Exceedance Curve (LEC) ---
-    sorted_base = np.sort(baseline2["annual_net_loss"])
-    prob_base = 1.0 - np.arange(1, baseline2["n_sims"] + 1) / baseline2["n_sims"]
-    
-    sorted_mit = np.sort(mitigated2["annual_net_loss"])
-    prob_mit = 1.0 - np.arange(1, mitigated2["n_sims"] + 1) / mitigated2["n_sims"]
-    
-    ax1.plot(sorted_base / 1e6, prob_base, label="Baseline (As-Is Current State)", color="#005587", linewidth=2.8)
-    ax1.plot(sorted_mit / 1e6, prob_mit, label="Mitigated (To-Be €2M Roadmap)", color="#86bc25", linewidth=2.8)
-    
-    # Reference vertical lines
-    ax1.axvline(x=BOARD_RISK_APPETITE / 1e6, color="#e3000f", linestyle="--", linewidth=2.2,
-                label=f"Board Risk Appetite (€{BOARD_RISK_APPETITE/1e6:.0f}M)")
-    ax1.axvline(x=baseline2["var_90_net"] / 1e6, color="#005587", linestyle=":", linewidth=1.8,
-                label=f"Baseline 90% VaR (€{baseline2['var_90_net']/1e6:.1f}M)")
-    ax1.axvline(x=mitigated2["var_90_net"] / 1e6, color="#86bc25", linestyle=":", linewidth=1.8,
-                label=f"Mitigated 90% VaR (€{mitigated2['var_90_net']/1e6:.1f}M)")
-
-    ax1.set_title("Loss Exceedance Curve (LEC) - As-Is vs. To-Be", fontsize=14, fontweight="bold", pad=12)
-    ax1.set_xlabel("Annual Net Financial Loss (€ Millions)", fontsize=11, fontweight="bold")
-    ax1.set_ylabel("Probability of Exceedance", fontsize=11, fontweight="bold")
-    ax1.set_xlim(0, 110)
-    ax1.set_ylim(0, 1.02)
-    ax1.grid(True, linestyle="--", alpha=0.45)
-    ax1.legend(loc="upper right", fontsize=10, framealpha=0.95)
-    
-    # --- Plot 2: Average Loss Component Breakdown (When Breach Occurs) ---
-    categories = ["Business\nInterruption", "IR & Forensics\nRecovery", "Extortion\n(Ransom)", "Secondary\n(GDPR/Refunds)"]
-    breach_filter = baseline2["annual_loss_events"] > 0
-    mean_bi = np.mean(baseline2["annual_bi_loss"][breach_filter]) / 1e6
-    mean_ir = np.mean(baseline2["annual_ir_loss"][breach_filter]) / 1e6
-    mean_ransom = np.mean(baseline2["annual_ransom_loss"][breach_filter]) / 1e6
-    mean_sec = np.mean(baseline2["annual_sec_loss"][breach_filter]) / 1e6
-    
-    values = [mean_bi, mean_ir, mean_ransom, mean_sec]
-    colors = ["#005587", "#43b02a", "#d9381e", "#768692"]
-    
-    bars = ax2.bar(categories, values, color=colors, width=0.55, edgecolor="#222", linewidth=0.8)
-    for bar in bars:
-        h = bar.get_height()
-        ax2.annotate(f"€{h:.1f}M",
-                     xy=(bar.get_x() + bar.get_width() / 2, h),
-                     xytext=(0, 4), textcoords="offset points",
-                     ha="center", va="bottom", fontsize=11, fontweight="bold")
-                     
-    ax2.set_title("Baseline Loss Breakdown (Average per Breach Event)", fontsize=14, fontweight="bold", pad=12)
-    ax2.set_ylabel("Average Cost (€ Millions)", fontsize=11, fontweight="bold")
-    ax2.set_ylim(0, max(values) * 1.25)
-    ax2.grid(axis="y", linestyle="--", alpha=0.45)
-    
-    # Annotate insurance recovery
-    mean_ins = np.mean(baseline2["annual_insurance_payout"][breach_filter]) / 1e6
-    ax2.text(0.95, 0.90, f"Cyber Insurance Offset: -€{mean_ins:.2f}M / event\n(Capped at €4.0M)",
-             transform=ax2.transAxes, ha="right", va="top",
-             fontsize=10, bbox=dict(boxstyle="round,pad=0.5", facecolor="#eef3f7", edgecolor="#005587", alpha=0.9))
-
-    plt.tight_layout()
-    plt.savefig("lec_curve_output_fixed_duration.png", dpi=160)
-    print("\n[SUCCESS] Charts saved to 'lec_curve_output_fixed_duration.png'")
-    
-    
-    
+    show_results(baseline2, mitigated2, "_fixed_downtime")
     
     
     return baseline1, mitigated1, baseline2, mitigated2
