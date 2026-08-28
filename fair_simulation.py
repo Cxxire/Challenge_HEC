@@ -12,6 +12,8 @@ import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 
+BOARD_RISK_APPETITE = 50_000_000  # €50M Board limit
+MITIGATION_INVESTMENT = 2_000_000  # €2M Security Automation & OT Visibility Project
 # --------------------------------------------------------------------------------------
 # 1. Core Distribution Generators & Helper Functions
 # --------------------------------------------------------------------------------------
@@ -323,8 +325,7 @@ def show_results(baseline1, mitigated1, name_sim):
 # 3. Main Execution & Comparison (As-Is Baseline vs. To-Be Mitigation)
 # --------------------------------------------------------------------------------------
 def main():
-    BOARD_RISK_APPETITE = 50_000_000  # €50M Board limit
-    MITIGATION_INVESTMENT = 2_000_000  # €2M Security Automation & OT Visibility Project
+    
     
     print("=" * 80)
     print(" CARREMAX CYBER RISK QUANTIFICATION (FAIR MONTE CARLO SIMULATION)")
