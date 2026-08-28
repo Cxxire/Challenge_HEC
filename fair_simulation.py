@@ -93,7 +93,7 @@ def run_fair_simulation(
     # Threat Event Frequency (TEF) - attempts per year
     tef_min=1.0, tef_mode=1.5, tef_max=2.0,
     # Vulnerability (Vuln) - probability attempt breaches defenses
-    vuln_min=0.15, vuln_mode=0.35, vuln_max=0.60,
+    vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
     # Downtime Duration (weeks)
     fixed_downtime=False, downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
     # Recovery / Incident Response & Forensics Costs (€)
