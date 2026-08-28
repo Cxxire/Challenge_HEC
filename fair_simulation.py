@@ -296,10 +296,7 @@ def show_results(baseline1, mitigated1, mitigated2 = None, name_sim = ""):
     # Reference vertical lines
     ax1.axvline(x=BOARD_RISK_APPETITE / 1e6, color="#e3000f", linestyle="--", linewidth=2.2,
                 label=f"Board Risk Appetite (€{BOARD_RISK_APPETITE/1e6:.0f}M)")
-    ax1.axvline(x=baseline1["var_90_net"] / 1e6, color="#005587", linestyle=":", linewidth=1.8,
-                label=f"Baseline 90% VaR (€{baseline1['var_90_net']/1e6:.1f}M)")
-    ax1.axvline(x=mitigated1["var_90_net"] / 1e6, color="#86bc25", linestyle=":", linewidth=1.8,
-                label=f"Mitigated 90% VaR (€{mitigated1['var_90_net']/1e6:.1f}M)")
+    
 
     ax1.set_title("Loss Exceedance Curve (LEC) - As-Is vs. To-Be", fontsize=14, fontweight="bold", pad=12)
     ax1.set_xlabel("Annual Net Financial Loss (€ Millions)", fontsize=11, fontweight="bold")
@@ -416,7 +413,7 @@ def main():
             tef_min=1.0, tef_mode=1.5, tef_max=2.0,
             vuln_min=0.1088, vuln_mode=0.1428, vuln_max=0.1768,
             downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+            ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
             secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
             ransom_cap=20_000_000,
             insurance_weekly_payout=500_000,
