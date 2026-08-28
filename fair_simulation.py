@@ -33,13 +33,15 @@ def gauss(n, min_val, mode_val, max_val):
     """
     Generate gaussian variable truncated between min and max with average at mode
     """
-    sigma = (max_val*1.1 - min_val) / 6
+    if (max_val + min_val )/2 < mode_val:
+        sigma = (max_val*1.1 - min_val) / 6
+    else:
+        sigma = (max_val - min_val*0.9) / 6
     mu = mode_val
     res = np.random.randn(n)
     X = np.array(mu + res * sigma)
-    # for i in range(len(X)):
-    #     while X[i] < min_val or X[i] > max_val:
-    #         X[i] = np.random.randn() * sigma + mu
+    for i in range(len(X)):
+        X[i] = max(X[i], 0)
     return X
 
 def calculate_downtime_loss(duration_weeks):
@@ -153,7 +155,7 @@ def run_fair_simulation(
         ransom_losses = np.zeros(n_breaches)
         for j, dt in enumerate(downtimes):
             # If outage extends beyond backup threshold (2 weeks), pressure to pay escalates
-            p_pay = 0.50 if dt < 2.0 else (0.70 if dt < 3.0 else 0.90)
+            p_pay = 0.50 if dt <= 2.0 else (0.70 if dt < 3.0 else 0.90)
             # Sample ransom demand / settlement with the €20M willingness cap as average
             ransom_amount = float(gauss(1, ransom_min, ransom_cap, ransom_max)[0])
             if np.random.rand() < p_pay and ransom_amount < ransom_cap:
@@ -221,13 +223,16 @@ def main():
     print("=" * 80)
     print(f"Iterations: 10,000 | Board Risk Appetite: €{BOARD_RISK_APPETITE:,.0f}\n")
     
+    
+    print("Running FAIR Monte Carlo Simulation for Baseline (As-Is) and Mitigated (To-Be) Scenarios...\n")
+    print()
     # ----------------------------------------------------------------------------------
     # A. Baseline Simulation (As-Is: 90% EDR, Manual IR, 0% OT Visibility)
     # ----------------------------------------------------------------------------------
     baseline = run_fair_simulation(
         n_sims=10000,
         tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-        vuln_min=0.15, vuln_mode=0.35, vuln_max=0.60,
+        vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
         downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
         ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
         secondary_min=0, secondary_mode=2_000_000, secondary_max=5_000_000,
