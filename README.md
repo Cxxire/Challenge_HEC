@@ -78,6 +78,7 @@ def calculate_downtime_loss(duration_weeks):
 | **Annualized Expected Loss (Net AEL)** | **€29.53M / yr** | **€5.88M / yr** | **€23.65M/yr net risk reduction** |
 | **90% Value at Risk (90% VaR)** | **€88.05M** *(Non-Compliant)* | **€25.01M** *(Compliant)* | **-71.6% reduction (Within Appetite)** |
 | **95% Value at Risk (95% VaR)** | **€112.26M** | **€32.65M** | **Tail risk controlled** |
+| **99% Value at Risk (99% VaR)** | **€168.49M** *(Catastrophic 1-in-100 yr)* | **€51.31M** | **-69.5% tail risk suppression** |
 | **P(Loss > €50M Board Appetite)** | **27.8%** *(Severe Exposure)* | **1.1%** *(Near Zero)* | **-96.0% reduction in catastrophic risk** |
 | **Expected Breach Downtime** | **2.89 weeks** | **< 1.00 week** | Preserves backup viability |
 | **ROSI on €2M Investment** | — | **1,082.3%** | **€21.65M net annual benefit** |
