@@ -212,7 +212,7 @@ def run_fair_simulation(
     }
     return results
 
-def show_results(baseline1, mitigated1, name_sim):
+def show_results(baseline1, mitigated1, mitigated2 = None, mitigated3 = None, mitigated4 = None, name_sim = ""):
     """
     Display the simulation results for both baseline and mitigated scenarios.
     """
@@ -267,8 +267,36 @@ def show_results(baseline1, mitigated1, name_sim):
     prob_mit = 1.0 - np.arange(1, mitigated1["n_sims"] + 1) / mitigated1["n_sims"]
     
     ax1.plot(sorted_base / 1e6, prob_base, label="Baseline (As-Is Current State)", color="#005587", linewidth=2.8)
-    ax1.plot(sorted_mit / 1e6, prob_mit, label="Mitigated (To-Be €2M Roadmap)", color="#86bc25", linewidth=2.8)
-    
+    mitigated_results = [
+    mitigated1,
+    mitigated2,
+    mitigated3,
+    mitigated4
+    ]
+
+    labels = [
+        "Mitigated 1",
+        "Mitigated 2",
+        "Mitigated 3",
+        "Mitigated 4"
+    ]
+
+    for mitigated, label in zip(mitigated_results, labels):
+
+        sorted_mit = np.sort(mitigated["annual_net_loss"])
+
+        prob_mit = (
+            1.0
+            - np.arange(1, mitigated["n_sims"] + 1)
+            / mitigated["n_sims"]
+        )
+
+        ax1.plot(
+            sorted_mit / 1e6,
+            prob_mit,
+            label=label,
+            linewidth=2.5
+        )
     # Reference vertical lines
     ax1.axvline(x=BOARD_RISK_APPETITE / 1e6, color="#e3000f", linestyle="--", linewidth=2.2,
                 label=f"Board Risk Appetite (€{BOARD_RISK_APPETITE/1e6:.0f}M)")
@@ -281,7 +309,7 @@ def show_results(baseline1, mitigated1, name_sim):
     ax1.set_xlabel("Annual Net Financial Loss (€ Millions)", fontsize=11, fontweight="bold")
     ax1.set_ylabel("Probability of Exceedance", fontsize=11, fontweight="bold")
     ax1.set_xlim(0, 110)
-    ax1.set_ylim(0, 1.02)
+    ax1.set_ylim(0, 0.6)
     ax1.grid(True, linestyle="--", alpha=0.45)
     ax1.legend(loc="upper right", fontsize=10, framealpha=0.95)
     
@@ -332,9 +360,10 @@ def main():
     print("=" * 80)
     print(f"Iterations: 10,000 | Board Risk Appetite: €{BOARD_RISK_APPETITE:,.0f}\n")
     
+    print("\n" + "=" * 80)
+    print(" A/ Variable duration downtime ")
+    print("=" * 80)
     
-    print("Running FAIR Monte Carlo Simulation for Baseline (As-Is) and Mitigated (To-Be) Scenarios...\n")
-    print("Variable duration downtime")
     # ----------------------------------------------------------------------------------
     # A. Baseline Simulation (As-Is: 90% EDR, Manual IR, 0% OT Visibility)
     # ----------------------------------------------------------------------------------
@@ -358,12 +387,12 @@ def main():
     # 1. Vuln drops drastically 
     # 2. Downtime duration drops due to automated recovery
     # 3. IR/Forensics cost drops due to automated playbooks
-    mitigated1 = run_fair_simulation(
+    mitigated_total = run_fair_simulation(
         n_sims=10000,
         tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-        vuln_min=0.05, vuln_mode=0.15, vuln_max=0.28,
-        downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-        ir_min=2_000_000, ir_mode=4_500_000, ir_max=7_000_000,
+        vuln_min=0.09, vuln_mode=0.12, vuln_max=0.16,
+        downtime_min=0.5, downtime_mode=1.0, downtime_max=1.5,
+        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
         secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
         ransom_cap=20_000_000,
         insurance_weekly_payout=500_000,
@@ -372,11 +401,54 @@ def main():
         seed=42
     )
     
-    show_results(baseline1, mitigated1, "_var_downtime")
+    mitigated1_1 = run_fair_simulation(
+        n_sims=10000,
+        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+        vuln_min=0.144, vuln_mode=0.189, vuln_max=0.234,
+        downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+        secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+        ransom_cap=20_000_000,
+        insurance_weekly_payout=500_000,
+        insurance_max_weeks=8,
+        insurance_annual_premium=300_000,
+        seed=42
+    )
     
+    mitigated1_2 = run_fair_simulation(
+            n_sims=10000,
+            tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+            vuln_min=0.1088, vuln_mode=0.1428, vuln_max=0.1768,
+            downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+            secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+            ransom_cap=20_000_000,
+            insurance_weekly_payout=500_000,
+            insurance_max_weeks=8,
+            insurance_annual_premium=300_000,
+            seed=42
+        )
     
-    print("Running FAIR Monte Carlo Simulation for Baseline (As-Is) and Mitigated (To-Be) Scenarios...\n")
-    print("Variable duration downtime")
+    mitigated1_3 = run_fair_simulation(
+            n_sims=10000,
+            tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+            vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
+            downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+            ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+            secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+            ransom_cap=20_000_000,
+            insurance_weekly_payout=500_000,
+            insurance_max_weeks=8,
+            insurance_annual_premium=300_000,
+            seed=42
+        )
+    
+    show_results(baseline1, mitigated_total, mitigated1_1, mitigated1_2, mitigated1_3, "_var_downtime")
+    
+    print("\n" + "=" * 80)
+    print(" B/ Fixed duration downtime ")
+    print("=" * 80)
+    
     # ----------------------------------------------------------------------------------
     # A. Baseline Simulation (As-Is: 90% EDR, Manual IR, 0% OT Visibility)
     # ----------------------------------------------------------------------------------
@@ -400,10 +472,10 @@ def main():
     # 1. Vuln drops drastically 
     # 2. Downtime duration drops due to automated recovery
     # 3. IR/Forensics cost drops due to automated playbooks
-    mitigated2 = run_fair_simulation(
+    mitigated_total_2 = run_fair_simulation(
         n_sims=10000,
         tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-        vuln_min=0.05, vuln_mode=0.15, vuln_max=0.28,
+        vuln_min=0.09, vuln_mode=0.12, vuln_max=0.16,
         fixed_downtime=True, downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
         ir_min=2_000_000, ir_mode=4_500_000, ir_max=7_000_000,
         secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
@@ -414,10 +486,52 @@ def main():
         seed=42
     )
     
-    show_results(baseline2, mitigated2, "_fixed_downtime")
+    mitigated2_1 = run_fair_simulation(
+            n_sims=10000,
+            tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+            vuln_min=0.144, vuln_mode=0.189, vuln_max=0.234,
+            downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+            ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+            secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+            ransom_cap=20_000_000,
+            insurance_weekly_payout=500_000,
+            insurance_max_weeks=8,
+            insurance_annual_premium=300_000,
+            seed=42
+        )
+        
+    mitigated2_2 = run_fair_simulation(
+                    n_sims=10000,
+                    tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+                    vuln_min=0.1088, vuln_mode=0.1428, vuln_max=0.1768,
+                    downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+                ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+                    secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+                    ransom_cap=20_000_000,
+                    insurance_weekly_payout=500_000,
+                    insurance_max_weeks=8,
+                    insurance_annual_premium=300_000,
+                    seed=42
+                )
+        
+    mitigated2_3 = run_fair_simulation(
+                    n_sims=10000,
+                    tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+                    vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
+                    downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+                    ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+                    secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+                    ransom_cap=20_000_000,
+                    insurance_weekly_payout=500_000,
+                    insurance_max_weeks=8,
+                    insurance_annual_premium=300_000,
+                    seed=42
+                )
+    
+    show_results(baseline2, mitigated_total_2, mitigated2_1, mitigated2_2, mitigated2_3, "_fixed_downtime")
     
     
-    return baseline1, mitigated1, baseline2, mitigated2
+    return baseline1, mitigated_total, baseline2, mitigated_total_2
 
 
 if __name__ == "__main__":
