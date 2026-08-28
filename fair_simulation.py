@@ -246,7 +246,17 @@ def show_results(baseline1, mitigated1, mitigated2 = None, name_sim = ""):
     print(f" • Probability of Exceeding Board Appetite: {mitigated1['prob_exceed_50m']:.1%}  (Near Zero)")
     
     print("\n" + "-" * 80)
-    print(" 3. STRATEGIC BUSINESS CASE & RETURN ON SECURITY INVESTMENT (ROSI)")
+        print(" 3. Other mitigation scenarios (e.g., insurance, EDR, etc.)")
+        print("-" * 80)
+        print(f" • Annual Probability of at Least 1 Breach: {mitigated2['prob_at_least_one_breach']:.1%}")
+        print(f" • Post-Mitigation Net AEL:                 €{mitigated2['ael_net']:,.0f}")
+        print(f" • Post-Mitigation 90% VaR:                 €{mitigated2['var_90_net']:,.0f}")
+        print(f" • Post-Mitigation 95% VaR:                 €{mitigated2['var_95_net']:,.0f}")
+        print(f" • Post-Mitigation 99% VaR:                 €{mitigated2['var_99_net']:,.0f}")
+        print(f" • Probability of Exceeding Board Appetite: {mitigated2['prob_exceed_50m']:.1%}  (Near Zero)")
+        
+    print("\n" + "-" * 80)
+    print(" 4. STRATEGIC BUSINESS CASE & RETURN ON SECURITY INVESTMENT (ROSI)")
     print("-" * 80)
     print(f" • Annual Net Risk Reduction (Δ AEL):       €{risk_reduction_ael:,.0f}")
     print(f" • Proposed Security Investment:            €{MITIGATION_INVESTMENT:,.0f}")
