@@ -273,7 +273,7 @@ def show_results(baseline1, mitigated1, mitigated2 = None, name_sim = ""):
     ]
 
     labels = [
-        "Mitigated with all solutions",
+        "Mitiigated with insurance" if name_sim == "_insurance" else "Mitigated with all solutions",
         "Mitigated with 99'%'EDR"
     ]
 
@@ -539,6 +539,7 @@ def main():
         seed=42
     )
     
+    show_results(baseline1, mitigated_insurance, mitigated2_2, "_insurance")
     
     
     
