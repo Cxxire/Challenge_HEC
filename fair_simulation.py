@@ -54,20 +54,31 @@ def calculate_downtime_loss(duration_weeks):
     x = np.atleast_1d(duration_weeks)
     loss = np.zeros_like(x, dtype=float)
     
+    pal1 = 15_000_000
+    pal2 = 30_000_000
+    pal3 = 50_000_000
+    pal4 = 90_000_000
+    
+    
+    palier_1 = gauss(1, pal1*0.75, pal1, pal1*1.25)[0]
+    palier_2 = gauss(1, pal2*0.75, pal2, pal2*1.25)[0]
+    palier_3 = gauss(1, pal3*0.75, pal3, pal3*1.25)[0]
+    palier_4 = gauss(1, pal4*0.75, pal4, pal4*1.25)[0]
+    
     mask0 = (x <= 1.0)
-    loss[mask0] = x[mask0] * 15_000_000
+    loss[mask0] = x[mask0] * palier_1
     
     mask1 = (x > 1.0) & (x <= 2.0)
-    loss[mask1] = 15_000_000 + (x[mask1] - 1.0) * (30_000_000 - 15_000_000)
+    loss[mask1] = palier_1 + (x[mask1] - 1.0) * (palier_2 - palier_1)
     
     mask2 = (x > 2.0) & (x <= 3.0)
-    loss[mask2] = 30_000_000 + (x[mask2] - 2.0) * (50_000_000 - 30_000_000)
+    loss[mask2] = palier_2 + (x[mask2] - 2.0) * (palier_3 - palier_2)
     
     mask3 = (x > 3.0) & (x <= 4.0)
-    loss[mask3] = 50_000_000 + (x[mask3] - 3.0) * (90_000_000 - 50_000_000)
+    loss[mask3] = palier_3 + (x[mask3] - 3.0) * (palier_4 - palier_3)
     
     mask4 = (x > 4.0)
-    loss[mask4] = 90_000_000 + (x[mask4] - 4.0) * 40_000_000
+    loss[mask4] = palier_4 + (x[mask4] - 4.0) * palier_3
     
     return loss if isinstance(duration_weeks, np.ndarray) else float(loss[0])
 
