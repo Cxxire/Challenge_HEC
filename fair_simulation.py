@@ -105,7 +105,7 @@ def run_fair_simulation(
     # Ransom Cap and Extortion Behavior
     ransom_cap=20_000_000, ransom_min = 5_000_000, ransom_max = 40_000_000,
     # Insurance Parameters
-    insurance_weekly_payout=500_000,
+    insurance_weekly_payout=500_000, insurance_annual_payout = 0,
     insurance_max_weeks=8,
     insurance_annual_premium=300_000,
     seed=42
@@ -134,7 +134,7 @@ def run_fair_simulation(
         if threats == 0:
             annual_net_loss[i] = insurance_annual_premium
             continue
-            
+        
         # Sample vulnerability for each threat attempt
         vulns = gauss(threats, vuln_min, vuln_mode, vuln_max)
         breaches = np.random.rand(threats) < vulns
@@ -172,7 +172,7 @@ def run_fair_simulation(
         
         # Event totals
         event_gross = bi_losses + ir_losses + ransom_losses + sec_other_losses
-        event_net = event_gross - ins_payouts
+        event_net = event_gross - ins_payouts - insurance_annual_payout
         
         # Accumulate annual figures
         annual_bi_loss[i] = np.sum(bi_losses)
@@ -412,7 +412,7 @@ def main():
             n_sims=10000,
             tef_min=1.0, tef_mode=1.5, tef_max=2.0,
             vuln_min=0.1088, vuln_mode=0.1428, vuln_max=0.1768,
-            downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+            downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
             ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
             secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
             ransom_cap=20_000_000,
@@ -497,9 +497,9 @@ def main():
                     n_sims=10000,
                     tef_min=1.0, tef_mode=1.5, tef_max=2.0,
                     vuln_min=0.1088, vuln_mode=0.1428, vuln_max=0.1768,
-                    downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-                ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
-                    secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+                    downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
+                    ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+                    secondary_min=0, secondary_mode=2_000_000, secondary_max=5_000_000,
                     ransom_cap=20_000_000,
                     insurance_weekly_payout=500_000,
                     insurance_max_weeks=8,
@@ -522,6 +522,24 @@ def main():
     #             )
     
     show_results(baseline2, mitigated_total_2, mitigated2_2, "_fixed_downtime")
+    
+    
+    mitigated_insurance = run_fair_simulation(
+        n_sims=10000,
+        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+        vuln_min=0.1088, vuln_mode=0.1428, vuln_max=0.1768,        
+        fixed_downtime=False, downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
+        ir_min=2_000_000, ir_mode=4_500_000, ir_max=7_000_000,
+        secondary_min=0, secondary_mode=2_000_000, secondary_max=5_000_000,
+        ransom_cap=20_000_000,
+        insurance_weekly_payout=500_000,
+        insurance_annual_payout = 20_000_000,
+        insurance_max_weeks=8,
+        insurance_annual_premium=450_000,
+        seed=42
+    )
+    
+    
     
     
     return baseline1, mitigated_total, baseline2, mitigated_total_2
