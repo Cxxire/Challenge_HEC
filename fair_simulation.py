@@ -82,7 +82,7 @@ def run_fair_simulation(
     # Vulnerability (Vuln) - probability attempt breaches defenses
     vuln_min=0.15, vuln_mode=0.35, vuln_max=0.60,
     # Downtime Duration (weeks)
-    downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
+    fixed_downtime=False, downtime_min=1.0, downtime_mode=2.0, downtime_max=4.5,
     # Recovery / Incident Response & Forensics Costs (€)
     ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
     # Secondary Losses: Legal, GDPR, Refunds (€)
@@ -131,7 +131,10 @@ def run_fair_simulation(
             continue
             
         # Simulate each successful breach / loss event
-        downtimes = gauss(n_breaches, downtime_min, downtime_mode, downtime_max)
+        if fixed_downtime:
+            downtimes = np.full(n_breaches, downtime_mode)
+        else:
+            downtimes = gauss(n_breaches, downtime_min, downtime_mode, downtime_max)
         bi_losses = calculate_downtime_loss(downtimes)
         ir_losses = gauss(n_breaches, ir_min, ir_mode, ir_max)
         
@@ -139,7 +142,7 @@ def run_fair_simulation(
         ransom_losses = np.zeros(n_breaches)
         for j, dt in enumerate(downtimes):
             # If outage extends beyond backup threshold (2 weeks), pressure to pay escalates
-            p_pay = 0.25 if dt < 2.0 else (0.65 if dt < 3.0 else 0.90)
+            p_pay = 0.50 if dt < 2.0 else (0.70 if dt < 3.0 else 0.90)
             # Sample ransom demand / settlement with the €20M willingness cap as average
             ransom_amount = float(gauss(1, ransom_min, ransom_cap, ransom_max)[0])
             if np.random.rand() < p_pay and ransom_amount < ransom_cap:
