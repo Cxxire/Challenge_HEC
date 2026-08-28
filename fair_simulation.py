@@ -212,7 +212,7 @@ def run_fair_simulation(
     }
     return results
 
-def show_results(baseline1, mitigated1, mitigated2 = None, mitigated3 = None, mitigated4 = None, name_sim = ""):
+def show_results(baseline1, mitigated1, mitigated2 = None, name_sim = ""):
     """
     Display the simulation results for both baseline and mitigated scenarios.
     """
@@ -269,16 +269,12 @@ def show_results(baseline1, mitigated1, mitigated2 = None, mitigated3 = None, mi
     ax1.plot(sorted_base / 1e6, prob_base, label="Baseline (As-Is Current State)", color="#005587", linewidth=2.8)
     mitigated_results = [
     mitigated1,
-    mitigated2,
-    mitigated3,
-    mitigated4
+    mitigated2
     ]
 
     labels = [
-        "Mitigated 1",
-        "Mitigated 2",
-        "Mitigated 3",
-        "Mitigated 4"
+        "Mitigated with all solutions",
+        "Mitigated with 99'%'EDR"
     ]
 
     for mitigated, label in zip(mitigated_results, labels):
@@ -401,19 +397,19 @@ def main():
         seed=42
     )
     
-    mitigated1_1 = run_fair_simulation(
-        n_sims=10000,
-        tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-        vuln_min=0.144, vuln_mode=0.189, vuln_max=0.234,
-        downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-        ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
-        secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
-        ransom_cap=20_000_000,
-        insurance_weekly_payout=500_000,
-        insurance_max_weeks=8,
-        insurance_annual_premium=300_000,
-        seed=42
-    )
+    # mitigated1_1 = run_fair_simulation(
+    #     n_sims=10000,
+    #     tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+    #     vuln_min=0.144, vuln_mode=0.189, vuln_max=0.234,
+    #     downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+    #     ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+    #     secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+    #     ransom_cap=20_000_000,
+    #     insurance_weekly_payout=500_000,
+    #     insurance_max_weeks=8,
+    #     insurance_annual_premium=300_000,
+    #     seed=42
+    # )
     
     mitigated1_2 = run_fair_simulation(
             n_sims=10000,
@@ -429,21 +425,21 @@ def main():
             seed=42
         )
     
-    mitigated1_3 = run_fair_simulation(
-            n_sims=10000,
-            tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-            vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
-            downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-            ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
-            secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
-            ransom_cap=20_000_000,
-            insurance_weekly_payout=500_000,
-            insurance_max_weeks=8,
-            insurance_annual_premium=300_000,
-            seed=42
-        )
+    # mitigated1_3 = run_fair_simulation(
+    #         n_sims=10000,
+    #         tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+    #         vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
+    #         downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+    #         ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+    #         secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+    #         ransom_cap=20_000_000,
+    #         insurance_weekly_payout=500_000,
+    #         insurance_max_weeks=8,
+    #         insurance_annual_premium=300_000,
+    #         seed=42
+    #     )
     
-    show_results(baseline1, mitigated_total, mitigated1_1, mitigated1_2, mitigated1_3, "_var_downtime")
+    show_results(baseline1, mitigated_total, mitigated1_2, "_var_downtime")
     
     print("\n" + "=" * 80)
     print(" B/ Fixed duration downtime ")
@@ -486,19 +482,19 @@ def main():
         seed=42
     )
     
-    mitigated2_1 = run_fair_simulation(
-            n_sims=10000,
-            tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-            vuln_min=0.144, vuln_mode=0.189, vuln_max=0.234,
-            downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-            ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
-            secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
-            ransom_cap=20_000_000,
-            insurance_weekly_payout=500_000,
-            insurance_max_weeks=8,
-            insurance_annual_premium=300_000,
-            seed=42
-        )
+    # mitigated2_1 = run_fair_simulation(
+    #         n_sims=10000,
+    #         tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+    #         vuln_min=0.144, vuln_mode=0.189, vuln_max=0.234,
+    #         downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+    #         ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+    #         secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+    #         ransom_cap=20_000_000,
+    #         insurance_weekly_payout=500_000,
+    #         insurance_max_weeks=8,
+    #         insurance_annual_premium=300_000,
+    #         seed=42
+    #     )
         
     mitigated2_2 = run_fair_simulation(
                     n_sims=10000,
@@ -514,21 +510,21 @@ def main():
                     seed=42
                 )
         
-    mitigated2_3 = run_fair_simulation(
-                    n_sims=10000,
-                    tef_min=1.0, tef_mode=1.5, tef_max=2.0,
-                    vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
-                    downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
-                    ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
-                    secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
-                    ransom_cap=20_000_000,
-                    insurance_weekly_payout=500_000,
-                    insurance_max_weeks=8,
-                    insurance_annual_premium=300_000,
-                    seed=42
-                )
+    # mitigated2_3 = run_fair_simulation(
+    #                 n_sims=10000,
+    #                 tef_min=1.0, tef_mode=1.5, tef_max=2.0,
+    #                 vuln_min=0.16, vuln_mode=0.21, vuln_max=0.26,
+    #                 downtime_min=0.5, downtime_mode=1.0, downtime_max=2.2,
+    #                 ir_min=5_000_000, ir_mode=10_000_000, ir_max=15_000_000,
+    #                 secondary_min=0, secondary_mode=1_000_000, secondary_max=3_000_000,
+    #                 ransom_cap=20_000_000,
+    #                 insurance_weekly_payout=500_000,
+    #                 insurance_max_weeks=8,
+    #                 insurance_annual_premium=300_000,
+    #                 seed=42
+    #             )
     
-    show_results(baseline2, mitigated_total_2, mitigated2_1, mitigated2_2, mitigated2_3, "_fixed_downtime")
+    show_results(baseline2, mitigated_total_2, mitigated2_2, "_fixed_downtime")
     
     
     return baseline1, mitigated_total, baseline2, mitigated_total_2
