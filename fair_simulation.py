@@ -29,6 +29,19 @@ def rpert(n, min_val, mode_val, max_val, lam=4):
     beta = w * (lam + 2)
     return min_val + (max_val - min_val) * stats.beta.rvs(alpha, beta, size=n)
 
+def gauss(n, min_val, mode_val, max_val):
+    """
+    Generate gaussian variable truncated between min and max with average at mode
+    """
+    sigma = (max_val*1.1 - min_val) / 6
+    mu = mode_val
+    res = np.random.randn(n)
+    X = np.array(mu + res * sigma)
+    # for i in range(len(X)):
+    #     while X[i] < min_val or X[i] > max_val:
+    #         X[i] = np.random.randn() * sigma + mu
+    return X
+
 def calculate_downtime_loss(duration_weeks):
     """
     Non-linear business interruption mapping based on Carremax executive interview:
@@ -88,7 +101,7 @@ def run_fair_simulation(
     np.random.seed(seed)
     
     # 1. Threat Event Frequency (TEF) sampling
-    tef_samples = rpert(n_sims, tef_min, tef_mode, tef_max)
+    tef_samples = gauss(n_sims, tef_min, tef_mode, tef_max)
     annual_threat_counts = np.random.poisson(tef_samples)
     
     # Container records for annual aggregation
@@ -108,7 +121,7 @@ def run_fair_simulation(
             continue
             
         # Sample vulnerability for each threat attempt
-        vulns = rpert(threats, vuln_min, vuln_mode, vuln_max)
+        vulns = gauss(threats, vuln_min, vuln_mode, vuln_max)
         breaches = np.random.rand(threats) < vulns
         n_breaches = int(np.sum(breaches))
         annual_loss_events[i] = n_breaches
@@ -118,9 +131,9 @@ def run_fair_simulation(
             continue
             
         # Simulate each successful breach / loss event
-        downtimes = rpert(n_breaches, downtime_min, downtime_mode, downtime_max)
+        downtimes = gauss(n_breaches, downtime_min, downtime_mode, downtime_max)
         bi_losses = calculate_downtime_loss(downtimes)
-        ir_losses = rpert(n_breaches, ir_min, ir_mode, ir_max)
+        ir_losses = gauss(n_breaches, ir_min, ir_mode, ir_max)
         
         # Ransom extortion: triggered with higher likelihood when downtime exceeds 2 weeks
         ransom_losses = np.zeros(n_breaches)
@@ -129,9 +142,9 @@ def run_fair_simulation(
             p_pay = 0.25 if dt < 2.0 else (0.65 if dt < 3.0 else 0.90)
             if np.random.rand() < p_pay:
                 # Sample ransom demand / settlement up to the €20M willingness cap
-                ransom_losses[j] = float(rpert(1, 5_000_000, 12_000_000, ransom_cap)[0])
+                ransom_losses[j] = float(gauss(1, 5_000_000, 12_000_000, ransom_cap)[0])
                 
-        sec_other_losses = rpert(n_breaches, secondary_min, secondary_mode, secondary_max)
+        sec_other_losses = gauss(n_breaches, secondary_min, secondary_mode, secondary_max)
         
         # Insurance payout calculation per event
         # €500k/week capped at 8 weeks (€4.0M max per event)
