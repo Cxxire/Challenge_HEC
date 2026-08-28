@@ -1,0 +1,52 @@
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+
+def rpert(n, min_val, mode_val, max_val, lam=4):
+    """
+    Generate n random samples from a PERT (Project Evaluation and Review Technique) distribution.
+    Widely used in FAIR modeling to capture expert estimates (min, most likely, max).
+    """
+    if min_val == max_val:
+        return np.full(n, min_val)
+    mu = (min_val + lam * mode_val + max_val) / (lam + 2)
+    v = (mu - min_val) / (max_val - min_val)
+    w = (max_val - mu) / (max_val - min_val)
+    alpha = v * (lam + 2)
+    beta = w * (lam + 2)
+    return min_val + (max_val - min_val) * stats.beta.rvs(alpha, beta, size=n)
+
+
+def gauss(n, min_val, mode_val, max_val):
+    """
+    Generate gaussian variable truncated between min and max with average at mode
+    """
+    sigma = (max_val*1.1 - min_val) / 6
+    mu = mode_val
+    res = np.random.randn(n)
+    X = np.array(mu + res * sigma)
+    # for i in range(len(X)):
+    #     while X[i] < min_val or X[i] > max_val:
+    #         X[i] = np.random.randn() * sigma + mu
+    return X
+
+
+X1 = rpert(100000, 2, 5, 10)
+
+X2 = gauss(100000, 2, 5, 10)
+
+plt.hist(X2, bins=50, density=True, alpha=0.4,
+         label="Gaussian")
+
+plt.hist(X1, bins=50, density=True, alpha=0.4,
+         label="PERT")
+
+plt.xlabel("Valeur")
+plt.ylabel("Densité")
+plt.title("Comparaison des distributions")
+plt.legend()
+plt.grid(alpha=0.2)
+
+plt.show()
